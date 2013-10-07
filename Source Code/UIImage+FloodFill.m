@@ -8,7 +8,11 @@
 
 #import "UIImage+FloodFill.h"
 
+#if TARGET_OS_IPHONE
 @implementation UIImage (FloodFill)
+#else
+@implementation NSImage (FloodFill)
+#endif
 /*
     startPoint : Point from where you want to color. Generaly this is touch point.
                  This is important because color at start point will be replaced with other.
@@ -21,7 +25,11 @@
                  If You dont want to use tolerance and want to incress performance Than you can change
                  compareColor(ocolor, color, tolerance) with just ocolor==color which reduse function call.
 */
+#if TARGET_OS_IPHONE
 - (UIImage *) floodFillFromPoint:(CGPoint)startPoint withColor:(UIColor *)newColor andTolerance:(int)tolerance;
+#else
+-(NSImage*) floodFillFromPoint:(CGPoint)startPoint withColor:(NSColor *)newColor andTolerance:(int)tolerance;
+#endif
 {
     @try
     {
@@ -34,8 +42,13 @@
         
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
         
+#if TARGET_OS_IPHONE
         CGImageRef imageRef = [self CGImage];
-        
+#else
+        NSRect rect = NSMakeRect(0, 0, self.size.width, self.size.height);
+        CGImageRef imageRef = [self CGImageForProposedRect:&rect context:NULL hints:nil];
+        CGImageRetain(imageRef);
+#endif
         NSUInteger width = CGImageGetWidth(imageRef);
         NSUInteger height = CGImageGetHeight(imageRef);
         
@@ -197,8 +210,12 @@
         
         CGImageRef newCGImage = CGBitmapContextCreateImage(context);
         
+#if TARGET_OS_IPHONE
         UIImage *result = [UIImage imageWithCGImage:newCGImage];
-        
+#else
+        NSImage *result = [[[NSImage alloc] initWithCGImage:newCGImage size:NSMakeSize(width, height)] autorelease];
+        CGImageRelease(imageRef);
+#endif
         CGImageRelease(newCGImage);
         
         CGContextRelease(context);
