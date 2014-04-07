@@ -213,7 +213,7 @@
 #if TARGET_OS_IPHONE
         UIImage *result = [UIImage imageWithCGImage:newCGImage];
 #else
-        NSImage *result = [[[NSImage alloc] initWithCGImage:newCGImage size:NSMakeSize(width, height)] autorelease];
+        NSImage *result = [[NSImage alloc] initWithCGImage:newCGImage size:NSMakeSize(width, height)];
         CGImageRelease(imageRef);
 #endif
         CGImageRelease(newCGImage);
